@@ -7,20 +7,20 @@ namespace Path_Sum_III
   {
     static void Main(string[] args)
     {
-      //TreeNode root = new TreeNode(10);
-      //root.left = new TreeNode(5);
-      //root.left.right = new TreeNode(2);
-      //root.left.right.right = new TreeNode(1);
-      //root.left.left = new TreeNode(3);
-      //root.left.left.right = new TreeNode(-2);
-      //root.left.left.left = new TreeNode(3);
-      //root.right = new TreeNode(-3);
-      //root.right.right = new TreeNode(11);
-      TreeNode root = new TreeNode(1);
-      root.left = new TreeNode(-2);
+      TreeNode root = new TreeNode(10);
+      root.left = new TreeNode(5);
+      root.left.right = new TreeNode(2);
+      root.left.right.right = new TreeNode(1);
+      root.left.left = new TreeNode(3);
+      root.left.left.right = new TreeNode(-2);
+      root.left.left.left = new TreeNode(3);
       root.right = new TreeNode(-3);
+      root.right.right = new TreeNode(11);
+      //TreeNode root = new TreeNode(1);
+      //root.left = new TreeNode(-2);
+      //root.right = new TreeNode(-3);
       Solution s = new Solution();
-      var answer = s.PathSum(root, -1);
+      var answer = s.PathSum(root, 8);
       Console.WriteLine(answer);
     }
   }
@@ -41,7 +41,7 @@ namespace Path_Sum_III
   public class Solution
   {
     // dictionary is used to store all the prefix sum to a node from the root
-    Dictionary<int, int> freq = new Dictionary<int, int>();
+    Dictionary<long, int> freq = new Dictionary<long, int>();
     public int PathSum(TreeNode root, int targetSum)
     {
       // if we found a prefix sum as 8, so 8 - 8(targetSum) = 0, we should get 1 path that has 8 as the target Sum
@@ -49,7 +49,7 @@ namespace Path_Sum_III
       return Helper(root, targetSum, 0);
     }
 
-    private int Helper(TreeNode root, int targetSum, int currentSum)
+    private int Helper(TreeNode root, int targetSum, long currentSum)
     {
       // base case
       if (root == null) return 0;
@@ -57,14 +57,16 @@ namespace Path_Sum_III
       // currentSum will always have the prefix sum
       currentSum += root.val;
       // if the currentSum - target the result element is present in the freq which meanswe have a path found
-      int key = currentSum - targetSum;
-      int count = freq.ContainsKey(key) ? freq[key] : 0;
+      var key = currentSum - targetSum;
+      var count = freq.ContainsKey(key) ? freq[key] : 0;
       // add the current prefix sum in the freq
       if (!freq.ContainsKey(currentSum))
         freq.Add(currentSum, 0);
       freq[currentSum] += 1;
 
-      int result = count + Helper(root.left, targetSum, currentSum) + Helper(root.right, targetSum, currentSum);
+      var leftCount = Helper(root.left, targetSum, currentSum);
+      var rightCount = Helper(root.right, targetSum, currentSum);
+      int result = count + leftCount  + rightCount;
       // decrement the current sum afer use
       freq[currentSum] -= 1;
       return result;
